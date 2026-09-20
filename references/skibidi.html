@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanetChat — Where the cool kids... still post!</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin:0; min-height:100%; }
+  body {
+    background:#008080;
+    color:#000;
+    font-family: "MS Sans Serif", Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    overflow-x:hidden;
+  }
+  a { color:#0000ee; text-decoration:underline; cursor:pointer; }
+  a:visited { color:#551a8b; }
+
+  /* Fake CRT / scanlines */
+  body::before {
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:9999;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,.035) 0px,
+      rgba(0,0,0,.035) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+    mix-blend-mode:multiply;
+  }
+
+  .page {
+    width:min(1240px, 98vw);
+    margin:8px auto 30px;
+    background:#c0c0c0;
+    border:2px solid #000;
+    box-shadow: 4px 4px 0 #000;
+  }
+
+  .window-titlebar {
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:2px 4px;
+    color:#fff;
+    background:linear-gradient(90deg,#000080,#1084d7);
+    font-weight:bold;
+    font-size:16px;
+    letter-spacing:.2px;
+  }
+  .window-buttons { display:flex; gap:3px; }
+  .win-btn {
+    width:22px;height:20px;
+    background:#c0c0c0;
+    color:#000;
+    border:2px outset #fff;
+    font-size:12px;
+    line-height:15px;
+    text-align:center;
+    cursor:pointer;
+    font-weight:bold;
+  }
+  .win-btn:active { border-style:inset; }
+
+  .hero {
+    position:relative;
+    height:166px;
+    overflow:hidden;
+    border:2px inset #fff;
+    background:#000;
+  }
+  .hero-canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .hero-content {
+    position:relative; z-index:2;
+    height:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 28px;
+    color:#fff;
+  }
+  .logo-wrap { text-align:center; }
+  .logo {
+    margin:0;
+    font-family:Impact, "Arial Black", sans-serif;
+    font-size:58px; line-height: .9;
+    letter-spacing:-3px;
+    text-shadow:
+      3px 3px #ff0000, 6px 6px #ffff00, 9px 9px #00ff00,
+      12px 12px #00ffff, 15px 15px #ff00ff;
+    animation:wobble 2s steps(2,end) infinite;
+  }
+  .tagline {
+    display:inline-block;
+    margin-top:14px;
+    padding:3px 8px;
+    color:#ffff00;
+    background:#000;
+    border:2px dashed #00ff00;
+    font-size:18px;
+    font-weight:bold;
+  }
+  .hero-art { font-size:66px; filter:drop-shadow(3px 3px 0 #00f); animation:floaty 2.4s ease-in-out infinite; }
+  .hero-art:last-child { animation-delay:.8s; }
+
+  .nav {
+    display:flex; flex-wrap:wrap;
+    gap:5px;
+    padding:6px;
+    border:2px inset #fff;
+    background:#d4d4d4;
+  }
+  .nav a {
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:5px 9px;
+    border:2px outset #fff;
+    background:#c0c0c0;
+    text-decoration:none;
+    font-weight:bold;
+  }
+  .nav a:active { border-style:inset; }
+  .nav .blink { color:#ff0000; }
+
+  .layout {
+    display:grid;
+    grid-template-columns:190px 1fr 190px;
+    gap:7px;
+    padding:7px;
+  }
+  .panel {
+    background:#c0c0c0;
+    border:2px outset #fff;
+    margin-bottom:7px;
+  }
+  .panel h3 {
+    margin:0;
+    padding:4px 6px;
+    background:#000080;
+    color:#fff;
+    font-size:15px;
+  }
+  .panel-body { padding:7px; }
+  .menu a {
+    display:block;
+    padding:5px 2px;
+  }
+  .tiny { font-size:11px; }
+  .center-title {
+    margin:0;
+    padding:5px 8px;
+    color:#fff;
+    background:#000080;
+    border:2px outset #fff;
+    font-size:19px;
+  }
+
+  table { width:100%; border-collapse:collapse; }
+  th, td { border:1px solid #7c7c7c; }
+  th {
+    background:#d4d4d4;
+    padding:6px;
+    text-align:left;
+    font-size:13px;
+  }
+  td {
+    background:#efefef;
+    padding:7px 6px;
+    vertical-align:middle;
+  }
+  tr:hover td { background:#ffffcc; }
+  .topic {
+    font-weight:bold;
+    font-size:14px;
+  }
+  .topic small {
+    display:block;
+    font-weight:normal;
+    color:#333;
+    margin-top:2px;
+  }
+  .icon {
+    width:52px;
+    text-align:center;
+    font-size:29px;
+  }
+
+  .stats {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:7px;
+    padding:7px;
+    background:#000;
+    color:#0f0;
+    border:2px inset #aaa;
+    font-family:"Courier New", monospace;
+    margin-top:7px;
+  }
+  .counter { letter-spacing:3px; font-weight:bold; }
+
+  .under {
+    margin:7px 0;
+    border:4px ridge #ffff00;
+    background:#ffff00;
+    color:#000;
+    text-align:center;
+    padding:8px;
+    font-size:18px;
+    font-weight:bold;
+    animation:flash 1s steps(2,end) infinite;
+  }
+
+  .marquee {
+    overflow:hidden;
+    white-space:nowrap;
+    border:2px inset #fff;
+    background:#000;
+    color:#00ff00;
+    padding:3px 0;
+    font-family:"Courier New", monospace;
+    font-weight:bold;
+  }
+  .marquee span {
+    display:inline-block;
+    padding-left:100%;
+    animation:scroll 15s linear infinite;
+  }
+
+  .visitor {
+    font-family:"Courier New", monospace;
+    background:#000;
+    color:#0f0;
+    padding:5px;
+    border:3px inset #777;
+    font-size:21px;
+    text-align:center;
+    letter-spacing:3px;
+  }
+  .clock {
+    font-family:"Courier New", monospace;
+    text-align:center;
+    font-size:16px;
+    font-weight:bold;
+    padding:8px;
+    background:#fff;
+    border:2px inset #fff;
+  }
+  .quote {
+    border:2px dashed #f0f;
+    background:#ffffcc;
+    padding:7px;
+    font-family:"Comic Sans MS", cursive;
+    transform:rotate(-1deg);
+  }
+
+  .badge {
+    display:inline-block;
+    margin:3px;
+    padding:5px 7px;
+    border:2px ridge #fff;
+    background:#008000;
+    color:#fff;
+    font-size:11px;
+    font-weight:bold;
+    animation:spin 2s linear infinite;
+  }
+  .badge.red { background:#f00; }
+  .badge.blue { background:#00f; }
+  .banana {
+    font-size:52px;
+    display:block;
+    text-align:center;
+    animation:dance .35s steps(2,end) infinite;
+  }
+
+  .footer {
+    padding:10px;
+    border-top:2px solid #fff;
+    text-align:center;
+    background:#d4d4d4;
+  }
+  .rainbow {
+    background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,violet);
+    height:7px;
+    width:170px;
+    margin:5px auto;
+  }
+
+  .popup {
+    position:fixed;
+    z-index:10000;
+    width:330px;
+    background:#c0c0c0;
+    border:2px outset #fff;
+    box-shadow:4px 4px #000;
+    display:none;
+  }
+  .popup .head {
+    background:#000080; color:#fff; padding:4px 6px; font-weight:bold;
+    display:flex; justify-content:space-between;
+  }
+  .popup .body { padding:12px; }
+  button {
+    background:#c0c0c0;
+    border:2px outset #fff;
+    padding:4px 12px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  button:active { border-style:inset; }
+
+  .spark {
+    position:fixed;
+    pointer-events:none;
+    z-index:11000;
+    font-weight:bold;
+    animation:spark .7s ease-out forwards;
+  }
+
+  @keyframes wobble { 0%,100%{transform:skewX(-2deg) rotate(-1deg)} 50%{transform:skewX(2deg) rotate(1deg)} }
+  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes flash { 0%,49%{opacity:1} 50%,100%{opacity:.25} }
+  @keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-100%)} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  @keyframes dance { 0%{transform:translateX(-8px) rotate(-8deg)} 50%{transform:translateX(8px) rotate(8deg)} 100%{transform:translateX(-8px) rotate(-8deg)} }
+  @keyframes spark { 0%{opacity:1;transform:scale(1) translateY(0)} 100%{opacity:0;transform:scale(1.6) translateY(-35px)} }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns:1fr; }
+    .hero { height:145px; }
+    .logo { font-size:42px; }
+    .hero-art { font-size:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="window-titlebar">
+    <span>🌐 PlanetChat - Where the cool kids... still post!</span>
+    <div class="window-buttons">
+      <div class="win-btn" title="minimize">_</div>
+      <div class="win-btn" title="maximize">□</div>
+      <div class="win-btn" title="close" id="closeBtn">×</div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <canvas class="hero-canvas" id="stars"></canvas>
+    <div class="hero-content">
+      <div class="hero-art">🌎</div>
+      <div class="logo-wrap">
+        <h1 class="logo">PlanetChat</h1>
+        <div class="tagline">Where the cool kids... still post!</div>
+      </div>
+      <div class="hero-art">🛸</div>
+    </div>
+  </section>
+
+  <nav class="nav">
+    <a href="#home">🏠 Home</a>
+    <a href="#help">❓ Help</a>
+    <a href="#search" id="searchBtn">🔍 Search</a>
+    <a href="#members">🧑‍🤝‍🧑 Members</a>
+    <a href="#profile">👤 Profile</a>
+    <a href="#login" id="loginBtn">🚪 Login</a>
+    <a href="#register" class="blink">✏️ Register</a>
+  </nav>
+
+  <div class="marquee"><span>⭐ BREAKING NEWS: Dave found a cool website in 2003!!! ⭐ &nbsp;&nbsp; / &nbsp;&nbsp; Please sign the guestbook &nbsp;&nbsp; / &nbsp;&nbsp; NO SPAM &nbsp;&nbsp; / &nbsp;&nbsp; YOU ARE VISITOR #<b id="marqueeCount">4883937</b>!!! ⭐</span></div>
+
+  <main class="layout">
+    <aside>
+      <section class="panel">
+        <h3>Navigation</h3>
+        <div class="panel-body menu">
+          <a href="#home">📄 Home</a>
+          <a href="#general">📁 General Chat</a>
+          <a href="#games">📁 Games</a>
+          <a href="#tech">📁 Tech &amp; PC</a>
+          <a href="#movies">📁 Movies &amp; TV</a>
+          <a href="#music">📁 Music</a>
+          <a href="#sports">📁 Sports</a>
+          <a href="#offtopic">📁 Off Topic</a>
+          <a href="#trash">🗑️ The Trash</a>
+          <a href="#banned" id="banned">🚫 Banned Forum</a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Site News</h3>
+        <div class="panel-body tiny">
+          <b>09/14/03</b><br>Added new smilies!!! 😎<br><br>
+          <b>09/02/03</b><br>Server moved AGAIN.<br><br>
+          <b>08/27/03</b><br>We are now 100% HTML 4.01 compliant*.<br><br>
+          *probably
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Cool Badges</h3>
+        <div class="panel-body" style="text-align:center">
+          <span class="badge">IE 6 READY</span>
+          <span class="badge red">NO LAMERS</span>
+          <span class="badge blue">BEST VIEWED 1024×768</span>
+        </div>
+      </section>
+    </aside>
+
+    <section>
+      <h2 class="center-title">Forum Index</h2>
+      <table aria-label="Forum index">
+        <thead><tr><th>Forum</th><th>Topics</th><th>Posts</th><th>Last Post</th></tr></thead>
+        <tbody>
+          <tr><td><div class="icon">💬</div></td><td class="topic"><a href="#general">General Chat</a><small>Talk about anything and everything!</small></td><td>1,234</td><td><a href="#topic">Re: What are you...</a><br><small>by pizza_boy · Today, 04:12 PM</small></td></tr>
+          <tr><td><div class="icon">🎮</div></td><td class="topic"><a href="#games">Games</a><small>PC, console, retro, whatever!</small></td><td>856</td><td><a href="#topic">Re: Best game of all time?</a><br><small>by xXShadowXx · Today, 03:47 PM</small></td></tr>
+          <tr><td><div class="icon">🖥️</div></td><td class="topic"><a href="#tech">Tech &amp; PC</a><small>Hardware, software, help, etc.</small></td><td>642</td><td><a href="#topic">Re: My PC is making a...</a><br><small>by cloud9 · Today, 02:33 PM</small></td></tr>
+          <tr><td><div class="icon">🎬</div></td><td class="topic"><a href="#movies">Movies &amp; TV</a><small>Discuss your favourite films &amp; shows!</small></td><td>531</td><td><a href="#topic">Re: Peter Griffin is the...</a><br><small>by neko_lover · Today, 01:21 PM</small></td></tr>
+          <tr><td><div class="icon">🎵</div></td><td class="topic"><a href="#music">Music</a><small>Share what you're listening to!</small></td><td>410</td><td><a href="#topic">Re: What's your top 3...</a><br><small>by RagingButt · Today, 12:56 PM</small></td></tr>
+          <tr><td><div class="icon">⚽</div></td><td class="topic"><a href="#sports">Sports</a><small>Footy, basketball, F1, whatever!</small></td><td>387</td><td><a href="#topic">Re: Australia vs England</a><br><small>by joshybuy123 · Today, 11:43 AM</small></td></tr>
+          <tr><td><div class="icon">🙂</div></td><td class="topic"><a href="#offtopic">Off Topic</a><small>Random stuff goes here.</small></td><td>1,021</td><td><a href="#topic">Re: I just saw a raccoon...</a><br><small>by cooldude69 · Today, 10:17 AM</small></td></tr>
+          <tr><td><div class="icon">🗑️</div></td><td class="topic"><a href="#trash">The Trash</a><small>For the truly unhinged.</small></td><td>287</td><td><a href="#topic">Re: This is a test</a><br><small>by pizza_boy · Today, 09:02 AM</small></td></tr>
+          <tr><td><div class="icon">🚫</div></td><td class="topic"><a href="#banned" id="banned2">Banned Forum</a><small>Only for the worst posters.</small></td><td>69</td><td><a href="#topic">Why was I banned?</a><br><small>by Admin · Yesterday, 11:59 PM</small></td></tr>
+        </tbody>
+      </table>
+
+      <div class="stats">
+        <span>Users online: <b>37</b> guests, <b>12</b> members</span>
+        <span class="counter" id="counter">004883937</span>
+      </div>
+
+      <div class="under">⚠️ UNDER CONSTRUCTION ⚠️<br><span class="tiny">(but like, actually forever)</span></div>
+
+      <section class="panel">
+        <h3>Today's Hot Topic</h3>
+        <div class="panel-body">
+          <b>🔥 “WHAT IS THE BEST FLAVOUR OF CHIPS???”</b><br>
+          Last reply by <a href="#users">cooldude69</a> — 147 unread replies.
+          <br><button id="readBtn">READ THREAD</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Guestbook</h3>
+        <div class="panel-body">
+          <input id="guestName" type="text" placeholder="your cool username" style="width:45%">
+          <input id="guestMsg" type="text" placeholder="say something wise..." style="width:45%">
+          <button id="signBtn">SIGN IT!!!</button>
+          <div id="guestbook" class="tiny" style="margin-top:7px"></div>
+        </div>
+      </section>
+    </section>
+
+    <aside>
+      <section class="panel">
+        <h3>Current Time</h3>
+        <div class="panel-body">
+          <div class="clock" id="clock">00:00:00</div>
+          <div class="tiny" style="text-align:center;margin-top:4px">Sat, 21 Jun 2003</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Visitor Counter</h3>
+        <div class="panel-body">
+          <div class="visitor" id="visitor">4883937</div>
+          <div class="tiny" style="text-align:center">Since 1 Jan 2001</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Weather</h3>
+        <div class="panel-body" style="text-align:center">
+          <div style="font-size:45px">☀️</div>
+          <b>Melbourne</b><br>Sunny · 18°C
+          <br><span class="tiny">(Totally accurate)</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Motivational Quote</h3>
+        <div class="panel-body quote">
+          “Don't just browse... contribute!”
+          <br><span class="tiny">— Admin</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Cool Links</h3>
+        <div class="panel-body menu tiny">
+          <a href="#" data-alert="Free Games!">⭐ Free Games!</a>
+          <a href="#" data-alert="Cool Wallpapers!">⭐ Cool Wallpapers!</a>
+          <a href="#" data-alert="1000s of GIFs!">⭐ 1000s of GIFs!</a>
+          <a href="#" data-alert="Get Rich Quick!">⭐ Get Rich Quick!</a>
+          <a href="#" data-alert="MySpace (lol)">⭐ MySpace (lol)</a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-body">
+          <span class="banana">🍌</span>
+          <div style="text-align:center;font-weight:bold">Have a nice day!</div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    🐱 <span class="rainbow"></span>
+    <div>This page has been visited <b id="footerCount">4,883,937</b> times!</div>
+    <div class="tiny">Best viewed in Internet Explorer 6 at 1024×768 · © PlanetChat 2001–2003 · <a href="#legal">Legal Stuff</a></div>
+  </footer>
+</div>
+
+<div class="popup" id="popup">
+  <div class="head"><span id="popupTitle">PlanetChat</span><button id="popupClose">×</button></div>
+  <div class="body" id="popupBody">Welcome!</div>
+</div>
+
+<script>
+  // Starfield background
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resizeStars() {
+    canvas.width = canvas.clientWidth * devicePixelRatio;
+    canvas.height = canvas.clientHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    stars = Array.from({length: 110}, () => ({
+      x: Math.random()*canvas.clientWidth,
+      y: Math.random()*canvas.clientHeight,
+      s: Math.random()*2+0.5,
+      v: Math.random()*0.7+0.15
+    }));
+  }
+  function starLoop() {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
+    for (const s of stars) {
+      s.y += s.v;
+      if (s.y > canvas.clientHeight) { s.y = -3; s.x = Math.random()*canvas.clientWidth; }
+      ctx.fillStyle = Math.random() > .85 ? '#0ff' : '#fff';
+      ctx.fillRect(s.x,s.y,s.s,s.s);
+    }
+    requestAnimationFrame(starLoop);
+  }
+  window.addEventListener('resize', resizeStars);
+  resizeStars(); starLoop();
+
+  // Clock deliberately lives in the requested retro era.
+  function tick() {
+    const d = new Date();
+    let h = d.getHours(), ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    const t = [h,d.getMinutes(),d.getSeconds()].map((x,i)=>String(x).padStart(2,'0')).join(':') + ' ' + ap;
+    document.getElementById('clock').textContent = t;
+  }
+  tick(); setInterval(tick,1000);
+
+  // Visitor counter slowly increments because apparently nobody has heard of analytics.
+  let count = 4883937;
+  function bumpCounter() {
+    count += Math.floor(Math.random()*3);
+    document.getElementById('visitor').textContent = String(count);
+    document.getElementById('counter').textContent = String(count).padStart(9,'0');
+    document.getElementById('footerCount').textContent = count.toLocaleString();
+    document.getElementById('marqueeCount').textContent = count;
+  }
+  setInterval(bumpCounter, 4200);
+
+  // Popup helpers
+  const popup = document.getElementById('popup');
+  function showPopup(title, body) {
+    document.getElementById('popupTitle').textContent = title;
+    document.getElementById('popupBody').innerHTML = body;
+    popup.style.display = 'block';
+    popup.style.left = Math.max(10, Math.random()*(window.innerWidth-350)) + 'px';
+    popup.style.top = Math.max(50, Math.random()*(window.innerHeight-220)) + 'px';
+  }
+  document.getElementById('popupClose').onclick = () => popup.style.display='none';
+  document.getElementById('closeBtn').onclick = () => showPopup('ERROR', 'You cannot close PlanetChat.<br><br><b>Reason:</b> The internet is permanent.');
+  document.getElementById('loginBtn').onclick = () => showPopup('Login', '<b>USERNAME:</b><br><input style="width:100%"><br><b>PASSWORD:</b><br><input style="width:100%" type="password"><br><br><button onclick="alert(\\'Wrong password. Try again in 2003.\\')">LOGIN</button>');
+  document.getElementById('searchBtn').onclick = () => showPopup('Search', '<input id="searchInput" style="width:100%" placeholder="type something..."><br><br><button onclick="alert(\\'No results found. Have you tried AltaVista?\\')">SEARCH</button>');
+  [document.getElementById('banned'), document.getElementById('banned2')].forEach(el => {
+    el.onclick = () => showPopup('ACCESS DENIED', '🚫 You have been banned from the Banned Forum.<br><br>Reason: <i>you know what you did</i>.');
+  });
+  document.querySelectorAll('[data-alert]').forEach(a => {
+    a.onclick = e => { e.preventDefault(); showPopup('COOL LINK', 'Opening <b>' + a.dataset.alert + '</b>...<br><br>...still loading...<br><br>Dial-up noises intensify.'); };
+  });
+  document.getElementById('readBtn').onclick = () => showPopup('HOT THREAD', '🔥 <b>WHAT IS THE BEST FLAVOUR OF CHIPS???</b><br><br>1,847 users have replied.<br><br>Consensus: nobody agrees.');
+  document.querySelectorAll('a[href^="#topic"]').forEach(a => {
+    a.onclick = () => showPopup('THREAD ERROR', 'This topic has moved.<br><br>Probably to page 47.');
+  });
+
+  // Guestbook
+  document.getElementById('signBtn').onclick = () => {
+    const n = document.getElementById('guestName').value.trim() || 'Anonymous';
+    const m = document.getElementById('guestMsg').value.trim() || 'ur site is kewl';
+    const line = document.createElement('div');
+    line.innerHTML = '<b>' + escapeHtml(n) + ':</b> ' + escapeHtml(m);
+    document.getElementById('guestbook').prepend(line);
+    document.getElementById('guestName').value = '';
+    document.getElementById('guestMsg').value = '';
+  };
+  function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Sparkle cursor trail
+  const symbols = ['✨','⭐','💥','✦','★'];
+  document.addEventListener('pointermove', e => {
+    if (Math.random() > .28) return;
+    const s = document.createElement('span');
+    s.className='spark';
+    s.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    s.style.left = (e.clientX + 4) + 'px';
+    s.style.top = (e.clientY + 3) + 'px';
+    s.style.color = ['#f00','#0ff','#ff0','#0f0','#f0f'][Math.floor(Math.random()*5)];
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),700);
+  });
+
+  // Random "network lag" gag
+  setInterval(() => {
+    if (Math.random() > .55) return;
+    document.title = 'PLANETCHAT — LOADING...';
+    setTimeout(()=>document.title='PlanetChat — Where the cool kids... still post!', 900);
+  }, 7000);
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+@font-face {
+    font-family: "blairWitch";
+    src: url('BlairCaps.ttf');
+}
+
+@font-face {
+    font-family: "vcr";
+    src: url('vcr.ttf');
+}
+.js-container {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+.title {
+    font-family: "blairWitch";
+    /*
+    shift rigt, shift down, blur, colour
+    */
+    text-shadow: 0px 0px 10px #FFFFFF, 0px 0px 10px #FFFFFF;
+    letter-spacing: 5px;
+}
+
+img {
+    width: 100px;
+}
+
+p {
+    text-align: center;
+    font-family: "vcr";
+}
+
+.button {
+    display: inline-block;
+
+    font-family: "blairWitch";
+    background-color: transparent;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+
+    text-decoration: none;
+
+    position: relative;
+    cursor: pointer;
+
+    transition: 250ms ease-in-out;
+
+    text-shadow: 0px 0px 5px white;
+}
+
+.button:hover {
+    animation: 0.05s infinite shake linear;
+    text-shadow: 0px 0px 20px #FFFFFF, 0px 0px 20px #FFFFFF, 0px 0px 20px #FFFFFF;
+    rotate: 5deg;
+    /* translate: 5px; */
+}
+
+@keyframes shake {
+    0% { translate: 2px; }
+    50% { translate: -2px; }
+    100% { translate: 2px; }
+}
+
+
+html {
+    color: white;
+}
+
+h3 {
+    padding-top: 50%;
+}
+
+body {
+    text-align: center;
+    background-color: black;
+}
+
+img {
+    padding: 5%;
+    transition: 250ms;
+}
+
+img:hover {
+    filter: drop-shadow(0px 0px 20px #FFFFFF);
+}
