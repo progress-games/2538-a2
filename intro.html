@@ -4,11 +4,25 @@
         <meta charset="utf-8" />
         <title>ASSIGNMENT</title>
         <link rel="stylesheet" href="style.css">
+        <style>
+            .message-board {
+                width: 70%;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* ratio */
+                gap: 10px;
+            }
+
+            .message-box {
+                padding: 10px;
+                border: 3px solid rgb(80, 81, 80);
+                background-color: rgb(28, 28, 28);
+                text-align: left;
+            }
+        </style>
     </head>
     <body>
-        <div class="js-container"></div>
-
-    
+        <div class="js-container"></div>    
         <script src="https://unpkg.com/supersimpledev/react.js"></script>
         <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
 
@@ -16,17 +30,21 @@
         <script type="text/babel">
             const title = <h4 class='title'>Intro</h4>
             const image = <img src='blair witch.png' />
+            const dracula = <img src='dracula.webp' class="message-box"/>
 
             const app = (
                 <>
                     {title}
-                    {image}
-                    <nav>
-                        <a href="intro.html" class="button">link 1</a>
-                        <a href="#link2" class="button">link 2</a>
-                        <a href="#link3" class="button">link 3</a>
-                    </nav>
-                    <p>Abbey and Orlando</p>
+                    <div class="message-board">
+                        <div>
+                            <p class="message-box"> However, the horror genre was far from a novelty, even at this age. Seminal horror works such as Bram Stoker’s Dracula or Mary Shelley’s Frankenstein had proven to “appal the mind and make the flesh creep” without the assistance of visual aid. Films and picture houses offered an inexpensive and accessible alternative to classic gothic literature.  </p>
+                            <p class="message-box" src="paragraph.txt" />
+                        </div>
+                        <div>
+                            {dracula}
+                            {dracula}
+                        </div>
+                    </div>
                 </>
             )
 

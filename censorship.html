@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>ASSIGNMENT</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            .message-board {
+                width: 70%;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* ratio */
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .message-box, .message-image-content, .message-box-floating {
+                padding: 10px;
+                border: 3px solid rgb(80, 81, 80);
+                background-color: rgb(28, 28, 28);
+                text-align: left;
+
+                height: fit-content;
+
+                transition: 250ms;
+            }
+
+            .message-box-floating {
+                width: 70%;
+                margin-left: 15%;
+            }
+
+            .message-box:hover, .message-box-floating:hover {
+                text-shadow: 1px 0px 5px white;
+                translate: 3px -3px;
+            }
+
+            .message-image-content {
+                translate: 0px 16px;
+                width: 100%;
+            }
+
+            .message-image-content:hover {
+                text-shadow: 1px 0px 5px white;
+                translate: 3px 13px;
+            }
+
+            .message-image {
+                width: 100%;
+            }
+
+            nav {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            select {
+                width: 160px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="js-container"></div>
+    
+        <script src="https://unpkg.com/supersimpledev/react.js"></script>
+        <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+
+        <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+        <script type="text/babel">
+            const title = <h4 class='title'>Censorship</h4>
+            const font = (
+                <>
+                    <select name="paragraph-font" id="paragraph-font">
+                        <option value="vcr">Default VCR font</option>
+                        <option value="arial">Arial</option>
+                    </select>
+                </>
+            )
+            const nosferatu = (
+                <div class="message-image-content"> 
+                    <img src="images/censorship/nosferatu.avif" class="message-image"/>
+                    <p>[1] <em>German director Murnau's depiction of Nosferatu in 1922, one of the earliest examples of the modern horror genre</em></p>
+                </div>
+            )
+
+            const paragraph_1 = (
+                <p class="message-box">
+                    Censorship has been a prolific issue in the horror film genre since its inception. Indeed, the intention of the genre is to instill fear, disgust, and discomfort in the viewer - emotions typically elicited when presented with immoral and inhuman footage. During the establishment of the film industry, news outlets were reporting “increasing anxieties towards this new medium”, with The Times stating in 1913:
+                    
+                    <br /> <br />
+                    “Before these children’s greedy eyes with heartless indiscrimination, horrors imaginable are …presented night after night…terrific massacres, horrible catastrophes, motor car smashes, public hanging, lynchings”
+
+                    <br /> <br />
+                    Certainly, the new medium challenged traditional religious views, prompted discussions around juvenile impact, and inspired the imposition of regulatory bodies.
+                </p>
+            )
+
+            const paragraph_2 = (
+                <p class="message-box-floating">
+                    However, the horror genre was far from a novelty, even at this age. Seminal horror works such as Bram Stoker’s Dracula or Mary Shelley’s Frankenstein had proven to “appal the mind and make the flesh creep”(p. 385) without the assistance of visual aid. Films and picture houses offered an inexpensive and accessible alternative to classic gothic literature. 
+                    <br /><br />
+                    Notably, The Blair Witch Project, doesn’t show the antagonist, nor any on-screen violence and very minimal gore. Despite this, the film earnt an “M” classification in Australia, “15” in the UK, and “R” in the US by depicting the occult in a realistic and suspenseful manner. 
+                    <br /><br />
+                    The objection to anti-Christian themes and general horror was present after the 1931 adaptation of Shelley’s Frankenstein. Although the adaptation lacked the grisly violence that early regulatory bodies protested, it, more importantly, presented Dr. Frankenstein as a God-like figure. This depiction was so objectionable as to be “banned entirely” by the Kansas board, “claiming it was cruel and would tend to debase morals”. In fact, as a result of the Frankenstein furor, “the Order of the Child asked the BBFC to introduce a new category specifically for films which ‘cannot under any circumstances be shown to children’” (Horror and the censors, julian petley). 
+                </p>
+            )
+
+            const app = (
+                <>
+                    <nav>
+                        <h4>home</h4>
+                        {title}
+                        <h4>next</h4>
+                    </nav>
+                    {font}
+                    <div class="message-board">
+                        {paragraph_1}
+                        {nosferatu}
+                    </div>
+                    {paragraph_2}
+                </>
+            )
+
+            const container = document.querySelector('.js-container')
+            const root = ReactDOM.createRoot(container)
+            root.render(app)
+        </script>
+    </body>
+</html>

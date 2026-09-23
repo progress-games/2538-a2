@@ -30,6 +30,14 @@ p {
     font-family: "vcr";
 }
 
+body:has(#paragraph-font option[value="arial"]:checked) p {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body:has(#paragraph-font option[value="vcr"]:checked) p {
+    font-family: "vcr";
+}
+
 .button {
     display: inline-block;
 
@@ -52,7 +60,7 @@ p {
 .button:hover {
     animation: 0.05s infinite shake linear;
     text-shadow: 0px 0px 20px #FFFFFF, 0px 0px 20px #FFFFFF, 0px 0px 20px #FFFFFF;
-    rotate: 5deg;
+    /* rotate: 5deg; */
     /* translate: 5px; */
 }
 
@@ -62,6 +70,12 @@ p {
     100% { translate: 2px; }
 }
 
+select {
+    border: none;
+    color: white;
+    background-color: black;
+    font-family: "vcr";
+}
 
 html {
     color: white;
@@ -76,11 +90,17 @@ body {
     background-color: black;
 }
 
-img {
+
+.clickable-img {
     padding: 5%;
     transition: 250ms;
 }
 
-img:hover {
+.clickable-img:hover {
     filter: drop-shadow(0px 0px 20px #FFFFFF);
+}
+
+img:hover::before {
+    content: "test";
+    size: 40px;
 }
