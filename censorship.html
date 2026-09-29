@@ -2,80 +2,21 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>ASSIGNMENT</title>
+        <title>censorship</title>
         <link rel="stylesheet" href="style.css">
-        <style>
-            .message-board {
-                width: 70%;
-                margin: 0 auto;
-                display: grid;
-                grid-template-columns: 1fr 1fr; /* ratio */
-                gap: 10px;
-                padding: 10px;
-            }
-
-            .message-box, .message-image-content, .message-box-floating {
-                padding: 10px;
-                border: 3px solid rgb(80, 81, 80);
-                background-color: rgb(28, 28, 28);
-                text-align: left;
-
-                height: fit-content;
-
-                transition: 250ms;
-            }
-
-            .message-box-floating {
-                width: 70%;
-                margin-left: 15%;
-            }
-
-            .message-box:hover, .message-box-floating:hover {
-                text-shadow: 1px 0px 5px white;
-                translate: 3px -3px;
-            }
-
-            .message-image-content {
-                translate: 0px 16px;
-                width: 100%;
-            }
-
-            .message-image-content:hover {
-                text-shadow: 1px 0px 5px white;
-                translate: 3px 13px;
-            }
-
-            .message-image {
-                width: 100%;
-            }
-
-            nav {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-            }
-
-            select {
-                width: 160px;
-            }
-        </style>
     </head>
     <body>
         <div class="js-container"></div>
     
         <script src="https://unpkg.com/supersimpledev/react.js"></script>
         <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
-
+        <script src="common.jsx" type="text/babel"></script>
         <script src="https://unpkg.com/supersimpledev/babel.js"></script>
         <script type="text/babel">
             const title = <h4 class='title'>Censorship</h4>
-            const font = (
-                <>
-                    <select name="paragraph-font" id="paragraph-font">
-                        <option value="vcr">Default VCR font</option>
-                        <option value="arial">Arial</option>
-                    </select>
-                </>
-            )
+            
+            const test = createHeader("censorship", "intro")
+            
             const nosferatu = (
                 <div class="message-image-content"> 
                     <img src="images/censorship/nosferatu.avif" class="message-image"/>
@@ -105,19 +46,28 @@
                 </p>
             )
 
+            const paragraph_3 = (
+                <p class="message-box-right">
+                    Certainly, the advent of talking pictures “realized the necessity and the opportunity of subscribing to a Code to govern [film] production”. Due to the increasing realism of the film medium, strict regulations were established to minimise depictions of “repellent subjects”, including “vulgarity”, “religion [as] villains”, “brutal killings”, and "obscenity" (Hays code) (which was strictly forbidden). Notably, these themes are in fact cornerstones of the horror genre, and so the film industry and horror filmmakers were in constant contention of which aspects of certain films were appropriate. This feud peaked during the establishment of the Obscene Publications Act of 1982 in the UK, specifically detailing a list of “video nasties” (BBFC) - films which were deemed so reprehensible that an individual could be prosecuted for simply owning a physical copy. The list mainly featured films with excessive rape, cannibalism, pornography, or torture such as Cannibal Holocaust, Gestapo’s Last Orgy, and, SS Experiment Camp.
+                    <br /><br />
+                    But, for horror genre viewers, the 39-film long list of video nasties turned into a watchlist. In fact, “‘nearly half of the [UK]’s youngsters had seen a video nasty”, and nearly “a third by the time they were age eight”. (172, cannibal). Perhaps the BBFC’s former director James Ferman was correct: “the more you ban it, the more it grows”.
+                </p>
+            )
+
             const app = (
                 <>
-                    <nav>
-                        <h4>home</h4>
-                        {title}
-                        <h4>next</h4>
-                    </nav>
-                    {font}
+                    {test}
                     <div class="message-board">
-                        {paragraph_1}
-                        {nosferatu}
+                        <div class="message-row">
+                            {paragraph_1}
+                            {nosferatu}
+                        </div>
+                        {paragraph_2}
+                        <div class="message-row">
+                            {nosferatu}
+                            {paragraph_3}
+                        </div>
                     </div>
-                    {paragraph_2}
                 </>
             )
 

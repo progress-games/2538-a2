@@ -2,8 +2,19 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>ASSIGNMENT</title>
+        <title>Home</title>
         <link rel="stylesheet" href="style.css">
+        <style>
+            .next {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                margin: 0 auto;
+            }
+
+            .centered {
+                padding-top: 30%;
+            }
+        </style>
     </head>
     <body>
         <div class="js-container"></div>
@@ -15,18 +26,31 @@
         <script src="https://unpkg.com/supersimpledev/babel.js"></script>
         <script type="text/babel">
             const title = <h3 class='title'>The Blair Witch Project (Project)</h3>
-            const image = <img src='blair witch.png' />
+            const image = (
+                <a href="intro.html" class="clickable-image">
+                    <div class='image-container'>
+                        <div class='text-box'>
+                            <p class='image-text'>BEGIN</p>
+                        </div>
+                            <img src='images/home/icon.png'/>
+                    </div>
+                </a>
+            )
 
             const app = (
                 <>
-                    {title}
-                    {image}
-                    <nav>
-                        <a href="censorship.html" class="button">censorship</a>
-                        <a href="#link2" class="button">link 2</a>
-                        <a href="#link3" class="button">link 3</a>
-                    </nav>
-                    <p>Abbey and Orlando</p>
+                    <div class="centered">
+                        {title}
+                        {image}
+                        <nav class="next">
+                            <a href="intro.html" class="button">intro</a>
+                            <a href="#link2" class="button">low-budget</a>
+                            <a href="#link3" class="button">marketing</a>
+                            <a href="censorship.html" class="button">censorship</a>
+                            <a href="#link2" class="button">conclusion</a>
+                        </nav>
+                        <p>Abbey and Orlando</p>
+                    </div>
                 </>
             )
 
