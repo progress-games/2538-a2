@@ -20,7 +20,21 @@
             const nosferatu = (
                 <div class="message-image-content"> 
                     <img src="images/censorship/nosferatu.avif" class="message-image"/>
-                    <p>[1] <em>German director Murnau's depiction of Nosferatu in 1922, one of the earliest examples of the modern horror genre</em></p>
+                    <p><em>German director Murnau's depiction of Nosferatu in 1922, one of the earliest examples of the modern horror genre</em></p>
+                </div>
+            )
+
+            const cannibal = (
+                <div class="message-image-content"> 
+                    <img src="images/censorship/cannibal.jpg" class="message-image"/>
+                    <p><em>Cannibal Holocaust - The Blair Witch Project's spiritual predecessor</em></p>
+                </div>
+            )
+
+            const stickman = (
+                <div class="message-image-content"> 
+                    <img src="images/censorship/stickman.png" class="message-image"/>
+                    <p><em>The iconic "stickman", visually similar to <a target="_blank" href="https://au.pinterest.com/pin/335588609730532114/">pagan symbols</a>. Pagan religions have been historically marginalised by the <a href="https://almuslih.org/wp-content/uploads/Library/Rousseau,%20P%20(ed)%20-%20A%20Companion%20to%20Late%20Antiquity.pdf#page=594" target="_blank">"Christian empire"</a></em></p>
                 </div>
             )
 
@@ -47,10 +61,18 @@
             )
 
             const paragraph_3 = (
-                <p class="message-box-right">
+                <p class="message-box">
                     Certainly, the advent of talking pictures “realized the necessity and the opportunity of subscribing to a Code to govern [film] production”. Due to the increasing realism of the film medium, strict regulations were established to minimise depictions of “repellent subjects”, including “vulgarity”, “religion [as] villains”, “brutal killings”, and "obscenity" (Hays code) (which was strictly forbidden). Notably, these themes are in fact cornerstones of the horror genre, and so the film industry and horror filmmakers were in constant contention of which aspects of certain films were appropriate. This feud peaked during the establishment of the Obscene Publications Act of 1982 in the UK, specifically detailing a list of “video nasties” (BBFC) - films which were deemed so reprehensible that an individual could be prosecuted for simply owning a physical copy. The list mainly featured films with excessive rape, cannibalism, pornography, or torture such as Cannibal Holocaust, Gestapo’s Last Orgy, and, SS Experiment Camp.
                     <br /><br />
                     But, for horror genre viewers, the 39-film long list of video nasties turned into a watchlist. In fact, “‘nearly half of the [UK]’s youngsters had seen a video nasty”, and nearly “a third by the time they were age eight”. (172, cannibal). Perhaps the BBFC’s former director James Ferman was correct: “the more you ban it, the more it grows”.
+                </p>
+            )
+            
+            const paragraph_4 = (
+                <p class="message-box">
+                    The Blair Witch Project shares seemingly little with the aforementioned video nasties. However, the fervour and excitement around the banning of these films certainly inspired the marketing tactics of The Blair Witch Project. Moreover, the unsettling found-footage style introduced by Cannibal Holocaust proved to successfully blur the line between fiction and reality. 
+                    <b /> <b />
+                    Ultimately the horror film genre inspired the need for a regulatory body. Despite this, its very presence encouraged filmmakers and cinemagoers (and later renters) to push their limits of comfort and tolerance to the most depraved concoctions of the human mind. The Blair Witch Project proves an interesting counterexample to the typical gratuitous violence of the genre, and instead earns its classification through its unsettling depiction of the occult, alluding to the religious origins of the modern classification board. 
                 </p>
             )
 
@@ -64,8 +86,12 @@
                         </div>
                         {paragraph_2}
                         <div class="message-row">
-                            {nosferatu}
+                            {cannibal}
                             {paragraph_3}
+                        </div>
+                        <div class="message-row">
+                            {paragraph_4}
+                            {stickman}
                         </div>
                     </div>
                 </>
